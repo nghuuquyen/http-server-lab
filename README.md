@@ -16,6 +16,14 @@ sudo nano /etc/hosts
 node nodejs/sample-app-server.js
 ```
 
+Or running the sample blogs by 
+
+*** Please remember to update correct Database connection credentials
+
+```
+node nodejs/sample-blogs-server.js
+```
+
 
 # Test
 
