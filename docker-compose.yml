@@ -10,14 +10,25 @@ services:
       - ./config/php.ini:/usr/local/etc/php/php.ini
       - ./config/vhosts:/etc/apache2/sites-available
     command: >
-      bash -c "a2enmod rewrite &&
+      bash -c "a2enmod rewrite proxy proxy_http &&
               a2ensite *.conf &&
               apache2-foreground && 
               a2ensite webapp.local && 
-              a2ensite lading-page.local"
+              a2ensite lading-page.local
+              a2ensite dynamic-web.local"
     depends_on:
       - mariadb
       
+  nodejs_webapp:
+    build: ./nodejs
+    restart: always
+    working_dir: /usr/src/app
+    volumes:
+      - ./nodejs:/usr/src/app
+    ports:
+      - "3000:3000"
+    command: "node sample-app-server.js"
+
   mariadb:
     image: mariadb:latest
     container_name: xampp_mariadb
@@ -33,7 +44,7 @@ services:
       - ./docker/mariadb:/var/lib/mysql
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: arm64v8/phpmyadmin
     container_name: xampp_phpmyadmin
     restart: always
     environment:
