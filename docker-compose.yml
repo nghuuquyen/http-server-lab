@@ -8,9 +8,16 @@ services:
     volumes:
       - ./xampp/htdocs:/var/www/html
       - ./config/php.ini:/usr/local/etc/php/php.ini
+      - ./config/vhosts:/etc/apache2/sites-available
+    command: >
+      bash -c "a2enmod rewrite &&
+              a2ensite *.conf &&
+              apache2-foreground && 
+              a2ensite webapp.local && 
+              a2ensite lading-page.local"
     depends_on:
       - mariadb
-
+      
   mariadb:
     image: mariadb:latest
     container_name: xampp_mariadb
