@@ -1,0 +1,39 @@
+services:
+  apache:
+    image: php:8.3-apache
+    container_name: xampp_apache
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./xampp/htdocs:/var/www/html
+      - ./config/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:latest
+    container_name: xampp_mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: xampp_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mariadb:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: xampp_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mariadb
