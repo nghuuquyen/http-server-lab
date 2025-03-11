@@ -27,7 +27,7 @@ services:
       - ./nodejs:/usr/src/app
     ports:
       - "3000:3000"
-    command: "node sample-app-server.js"
+    tty: true # Giữ terminal mở
 
   mariadb:
     image: mariadb:latest
