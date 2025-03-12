@@ -13,9 +13,9 @@ services:
       bash -c "a2enmod rewrite proxy proxy_http &&
               a2ensite *.conf &&
               apache2-foreground && 
-              a2ensite webapp.local && 
-              a2ensite lading-page.local
-              a2ensite dynamic-web.local"
+              a2ensite site-a.local && 
+              a2ensite site-b.local &&
+              dynamic-web.local"
     depends_on:
       - mariadb
       
