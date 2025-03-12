@@ -1,14 +1,23 @@
-version: '3.8'
-
 services:
   apache:
-    image: httpd:2.4
+    image: php:8.3-apache
+    restart: always
     container_name: web_server
     ports:
       - "80:80"
     volumes:
-      - ./static-sites:/var/www/html
-      - ./config/vhosts:/usr/local/apache2/conf/extra/vhosts
+      - ./xampp/htdocs:/var/www/html
+      - ./config/php.ini:/usr/local/etc/php/php.ini
+      - ./config/vhosts:/etc/apache2/sites-available
+    
+    # Enable modules rewrite, proxy, proxy_http and enable vhosts
+    command: >
+      bash -c "a2enmod rewrite proxy proxy_http &&
+              a2ensite *.conf &&
+              apache2-foreground && 
+              a2ensite site-a.local && 
+              a2ensite site-b.local &&
+              a2ensite blog-app.local"
     depends_on:
       - nodejs
     networks:
@@ -16,26 +25,45 @@ services:
 
   nodejs:
     build: ./nodejs
-    container_name: node_app
+    tty: true # Keep the container running
+    container_name: application_server
     environment:
       - DB_HOST=mariadb
       - DB_USER=root
       - DB_PASSWORD=example
       - DB_NAME=blog_app
+    ports:
+      - "3000:3000"
+    command: ["node", "blog-app/server.js"]
     depends_on:
       - mariadb
     networks:
       - webnet
 
   mariadb:
-    image: mariadb:10.5
-    container_name: database
+    image: mariadb:latest
+    container_name: database_server
     environment:
-      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=blog_app
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - ./docker/mariadb:/var/lib/mysql
       - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - webnet
+
+  phpmyadmin:
+    image: arm64v8/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mariadb
     networks:
       - webnet
 
@@ -43,5 +71,3 @@ networks:
   webnet:
     driver: bridge
 
-volumes:
-  mariadb_data:

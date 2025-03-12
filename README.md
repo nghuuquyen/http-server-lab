@@ -55,8 +55,6 @@ You can choose between two deployment methods:
 │   ├── simple-server/      # Basic HTTP server
 │   │   └── server.js
 │   └── blog-app/          # Dynamic blog application
-│       ├── sql/
-│       │   └── blogs.sql  # The SQL file to create blog database and seeding data
 │       ├── package.json
 │       └── server.js
 ├── config/                # Configuration files
