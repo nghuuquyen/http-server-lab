@@ -1,213 +1,179 @@
-# Node.js Web Application Examples
+# Lab: Deploying Static and Dynamic Websites
 
-This repository contains educational examples demonstrating basic web application development using Node.js. The examples are designed to help students understand fundamental concepts of web servers and dynamic content generation.
+This lab helps students develop practical skills in deploying static and dynamic websites. You'll learn the differences between these two types of websites and how to set them up in real-world scenarios.
 
-## Project Overview
+## Architecture Overview
 
-This repository includes two example projects:
-1. **Simple Web Server**: A basic HTTP server that demonstrates the fundamentals of handling web requests
-2. **Dynamic Blog Application**: A more complex example showing dynamic content generation with database integration
+```mermaid
+graph TD
+    subgraph "Static Website"
+        A[Client Browser] <--> B[Apache Web Server]
+    end
+    
+    subgraph "Dynamic Website"
+        C[Client Browser] <--> D[Apache Web Server]
+        D <--> E[Node.js App Server]
+        E <--> F[(MySQL/MariaDB)]
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+    style E fill:#bfb,stroke:#333,stroke-width:2px
+    style F fill:#fbb,stroke:#333,stroke-width:2px
+```
 
 ## Prerequisites
+- Basic understanding of web servers
+- Familiarity with command line interface
+- Text editor or IDE
+- Git installed
 
-- Node.js installed on your system
-- XAMPP or similar for MariaDB/MySQL database
-- Text editor of your choice
+## Getting Started
+Please follow the step-by-step instructions of your operating system's guide from the Lab Activities section.
 
-## Setup Instructions
+## Deployment Options
 
-### 1. Configure Local Hosts
+You can choose between two deployment methods:
 
-The hosts file location and editing process differs by operating system:
+1. **Traditional Setup**: Install and configure services directly on your machine
+2. **Docker Setup**: Use Docker Compose to run everything in containers
 
-#### Windows
-1. Open Notepad as Administrator
-   - Right-click on Notepad
-   - Select "Run as administrator"
-2. Open the hosts file:
-   - Navigate to: `C:\Windows\System32\drivers\etc\hosts`
-3. Add the following lines:
+
+## Project Structure
+
 ```
-127.0.0.1 site-a.local
-127.0.0.1 site-b.local
-127.0.0.1 dynamic-web.local
-```
-4. Save the file (You might need to save it to desktop first, then copy it back if having permission issues)
-
-#### macOS
-1. Open Terminal
-2. Edit the hosts file using:
-```bash
-sudo nano /etc/hosts
-```
-3. Add the following lines:
-```
-127.0.0.1 site-a.local
-127.0.0.1 site-b.local
-127.0.0.1 dynamic-web.local
-```
-4. Save: Press `Ctrl + O`, then `Enter`
-5. Exit: Press `Ctrl + X`
-
-#### Ubuntu/Linux
-1. Open Terminal
-2. Edit the hosts file using:
-```bash
-sudo nano /etc/hosts
-```
-3. Add the following lines:
-```
-127.0.0.1 site-a.local
-127.0.0.1 site-b.local
-127.0.0.1 dynamic-web.local
-```
-4. Save: Press `Ctrl + O`, then `Enter`
-5. Exit: Press `Ctrl + X`
-
-### 2. Install Dependencies
-
-First, make sure Node.js is installed on your system:
-
-#### Windows
-1. Download Node.js installer from [nodejs.org](https://nodejs.org/)
-2. Run the installer and follow the installation wizard
-3. Verify installation:
-```bash
-node --version
-npm --version
+/
+├── docs/                    # Detailed documentation
+├── static-sites/           
+│   ├── site-a/             # First static website
+│   │   └── index.html
+│   └── site-b/             # Second static website
+│       └── index.html
+├── nodejs/                 # Node.js applications
+│   ├── simple-server/      # Basic HTTP server
+│   │   └── server.js
+│   └── blog-app/          # Dynamic blog application
+│       ├── sql/
+│       │   └── blogs.sql  # The SQL file to create blog database and seeding data
+│       ├── package.json
+│       └── server.js
+├── config/                # Configuration files
+│   └── httpd.conf        # Apache configuration
+├── sql/                  # Database initialization
+│   └── init.sql         # Initial database schema
+└── docker-compose.yml    # Docker composition file
 ```
 
-#### macOS
-1. Using Homebrew:
-```bash
-brew install node
-```
-Or download the installer from [nodejs.org](https://nodejs.org/)
+## Lab Activities
 
-2. Verify installation:
-```bash
-node --version
-npm --version
-```
+### Exercise 1: Static Website Deployment
+Learn how to deploy multiple static websites using Apache virtual hosts.
 
-#### Ubuntu/Linux
-1. Install using apt:
-```bash
-sudo apt update
-sudo apt install nodejs npm
-```
-2. Verify installation:
-```bash
-node --version
-npm --version
-```
+Choose your operating system:
+- [Windows Guide](docs/exercises/ex1-windows-guide.md)
+- [macOS Guide](docs/exercises/ex1-macos-guide.md)
+- [Ubuntu Guide](docs/exercises/ex1-ubuntu-guide.md)
 
-Then, install project dependencies:
-```bash
-cd nodejs
-npm install
-```
+### Exercise 2: Dynamic Website with Node.js
+Set up a dynamic blog website using Node.js and MariaDB.
 
-### 3. Database Setup (for Blog Application)
+Choose your operating system:
+- [Windows Guide](docs/exercises/ex2-windows-guide.md)
+- [macOS Guide](docs/exercises/ex2-macos-guide.md)
+- [Ubuntu Guide](docs/exercises/ex2-ubuntu-guide.md)
 
-#### Windows (XAMPP)
-1. Install XAMPP from [apachefriends.org](https://www.apachefriends.org/)
-2. Start XAMPP Control Panel and start MySQL service
-3. Update database credentials in `nodejs/sample-blogs-server.js`:
-```javascript
-const db = mysql.createConnection({
-    host: 'localhost',    // Use 'localhost' for Windows
-    user: 'root',        // Default XAMPP username
-    password: '',        // Default XAMPP password is empty
-    database: 'blog_app'
-});
-```
+### Exercise 3: Docker Deployment (Optional)
+Learn how to containerize and deploy web applications using Docker.
 
-#### macOS (XAMPP)
-1. Install XAMPP from [apachefriends.org](https://www.apachefriends.org/)
-2. Start XAMPP and MySQL service from XAMPP manager
-3. Update database credentials in `nodejs/sample-blogs-server.js`:
-```javascript
-const db = mysql.createConnection({
-    host: 'localhost',    // Use 'localhost' for local setup
-    user: 'root',        // Default XAMPP username
-    password: 'root',    // Default XAMPP password on macOS
-    database: 'blog_app'
-});
-```
+- [Docker Setup Guide](docs/exercises/ex3-docker-guide.md)
 
-#### Ubuntu/Linux
-1. Install MariaDB:
-```bash
-sudo apt update
-sudo apt install mariadb-server
-sudo mysql_secure_installation
-```
-2. Update database credentials in `nodejs/sample-blogs-server.js`:
-```javascript
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'your_password',  // Password set during installation
-    database: 'blog_app'
-});
-```
+## Additional Resources
 
-## Running the Applications
+### Server Setup Guides
+- [Node.js Server Setup](docs/nodejs-server/setup-guide.md)
+- [Dynamic Site Architecture](docs/dynamic-site/setup-guide.md)
 
-### 1. Simple Web Server
-This is a basic HTTP server that responds with a "Hello" message:
+### Apache Setup Guides
+- [Windows Apache Setup](docs/apache-setup/windows-guide.md)
+- [macOS Apache Setup](docs/apache-setup/macos-guide.md)
+- [Ubuntu Apache Setup](docs/apache-setup/ubuntu-guide.md)
 
-```bash
-node nodejs/sample-app-server.js
-```
-The server will start on port 3000. Visit http://site-b.local to see the response.
+## Troubleshooting
 
-### 2. Blog Application
-This is a more complex example that demonstrates:
-- Dynamic content generation
-- Database integration
-- Basic routing
-- HTML template rendering
+### Common Issues and Solutions
 
-To run:
-```bash
-node nodejs/sample-blogs-server.js
-```
+#### Apache Issues
+1. Port 80 already in use:
+   ```bash
+   # Windows (Command Prompt as Admin):
+   netstat -ano | findstr :80
+   taskkill /PID <PID> /F
+   
+   # macOS/Linux:
+   sudo lsof -i :80
+   sudo kill <PID>
+   ```
 
-## Testing the Applications
+2. Permission denied:
+   ```bash
+   # Windows:
+   # Run as Administrator
+   
+   # macOS/Linux:
+   sudo chmod -R 755 /path/to/website
+   sudo chown -R www-data:www-data /path/to/website
+   ```
 
-1. Make sure your hosts file is properly configured
-2. Ensure no other services are using ports 80 or 3000
-3. Visit these URLs in your browser:
-```
-http://site-a.local
-http://site-b.local
-http://dynamic-web.local
-```
+#### Node.js Issues
+1. Module not found:
+   ```bash
+   # Reinstall dependencies
+   cd nodejs/blog-app
+   rm -rf node_modules
+   npm install
+   ```
 
-### Troubleshooting
+2. Port 3000 in use:
+   ```bash
+   # Windows:
+   netstat -ano | findstr :3000
+   taskkill /PID <PID> /F
+   
+   # macOS/Linux:
+   lsof -i :3000
+   kill <PID>
+   ```
 
-#### Windows
-- If URLs don't work, try flushing DNS: `ipconfig /flushdns` in Command Prompt (Admin)
-- Check if ports are in use: `netstat -ano | findstr :3000`
+#### Database Issues
+1. Connection refused:
+   ```bash
+   # Check if MariaDB is running
+   # Windows (XAMPP):
+   Check MySQL service in XAMPP Control Panel
+   
+   # macOS:
+   brew services restart mysql
+   
+   # Ubuntu:
+   sudo systemctl restart mariadb
+   ```
 
-#### macOS
-- Flush DNS cache: `sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder`
-- Check ports in use: `lsof -i :3000`
+2. Access denied:
+   ```sql
+   # Log into MySQL/MariaDB
+   mysql -u root -p
+   
+   # Grant permissions
+   GRANT ALL PRIVILEGES ON blog_app.* TO 'user'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
 
-#### Ubuntu/Linux
-- Flush DNS cache: `sudo systemd-resolve --flush-caches`
-- Check ports in use: `sudo lsof -i :3000`
 
 ## ⚠️ Educational Purpose
 
 These examples are for learning purposes only and demonstrate basic concepts. They are not production-ready and do not implement security best practices.
 
-## Learning Objectives
-
-- Understanding basic HTTP server creation
-- Working with database connections
-- Handling different URL routes
-- Generating dynamic HTML content
-- Basic web application architecture
+## Contributing
+Feel free to submit issues and enhancement requests

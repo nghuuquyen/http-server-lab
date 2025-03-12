@@ -1,57 +1,47 @@
+version: '3.8'
+
 services:
   apache:
-    image: php:8.3-apache
-    container_name: xampp_apache
-    restart: always
+    image: httpd:2.4
+    container_name: web_server
     ports:
       - "80:80"
     volumes:
-      - ./xampp/htdocs:/var/www/html
-      - ./config/php.ini:/usr/local/etc/php/php.ini
-      - ./config/vhosts:/etc/apache2/sites-available
-    command: >
-      bash -c "a2enmod rewrite proxy proxy_http &&
-              a2ensite *.conf &&
-              apache2-foreground && 
-              a2ensite site-a.local && 
-              a2ensite site-b.local &&
-              dynamic-web.local"
+      - ./static-sites:/var/www/html
+      - ./config/vhosts:/usr/local/apache2/conf/extra/vhosts
+    depends_on:
+      - nodejs
+    networks:
+      - webnet
+
+  nodejs:
+    build: ./nodejs
+    container_name: node_app
+    environment:
+      - DB_HOST=mariadb
+      - DB_USER=root
+      - DB_PASSWORD=example
+      - DB_NAME=blog_app
     depends_on:
       - mariadb
-      
-  nodejs_webapp:
-    build: ./nodejs
-    restart: always
-    working_dir: /usr/src/app
-    volumes:
-      - ./nodejs:/usr/src/app
-    ports:
-      - "3000:3000"
-    tty: true # Giữ terminal mở
+    networks:
+      - webnet
 
   mariadb:
-    image: mariadb:latest
-    container_name: xampp_mariadb
-    restart: always
+    image: mariadb:10.5
+    container_name: database
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: xampp_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    ports:
-      - "3306:3306"
+      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_DATABASE=blog_app
     volumes:
-      - ./docker/mariadb:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - webnet
 
-  phpmyadmin:
-    image: arm64v8/phpmyadmin
-    container_name: xampp_phpmyadmin
-    restart: always
-    environment:
-      PMA_HOST: mariadb
-      PMA_USER: root
-      PMA_PASSWORD: root
-    ports:
-      - "8081:80"
-    depends_on:
-      - mariadb
+networks:
+  webnet:
+    driver: bridge
+
+volumes:
+  mariadb_data:
